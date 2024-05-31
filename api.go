@@ -18,7 +18,7 @@ func NewApiServer(svc Service) *ApiServer {
 		svc: svc,
 		mux: s,
 	}
-  // INFO: move this router config to an add routes function
+	// INFO: move this router config to an add routes function
 	apiServer.mux.HandleFunc("POST /quote", apiServer.handleGetQuote)
 	return apiServer
 }
