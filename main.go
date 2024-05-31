@@ -1,9 +1,7 @@
 package main
 
 import (
-	"context"
 	"fmt"
-	"log"
 )
 
 func run() {
@@ -11,11 +9,8 @@ func run() {
   svc := NewQuoteService(nil)
   svc = NewLoggingService(svc)
 
-  q, err := svc.GetQuote(context.TODO(), 1)
-  if err != nil {
-    log.Fatal(err)
-  }
-  fmt.Printf("%+v\n", q)
+  apiServer := NewApiServer(svc)
+  apiServer.Start(":8080")
 
 }
 
