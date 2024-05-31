@@ -18,11 +18,12 @@ func NewApiServer(svc Service) *ApiServer {
 		svc: svc,
 		mux: s,
 	}
+  // INFO: move this router config to an add routes function
+	apiServer.mux.HandleFunc("POST /quote", apiServer.handleGetQuote)
 	return apiServer
 }
 
 func (s *ApiServer) Start(addr string) error {
-	s.mux.HandleFunc("POST /quote", s.handleGetQuote)
 	server := &http.Server{
 		Addr:    addr,
 		Handler: s.mux,
