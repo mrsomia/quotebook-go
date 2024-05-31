@@ -18,7 +18,7 @@ func NewLoggingService (next Service) Service{
 
 func (s *LoggingService) GetQuote(ctx context.Context, id int) (q *Quote, err error) {
   defer func(start time.Time) {
-    fmt.Printf("quote=%+v err=%v took=%d\n", q, err, time.Since(start) )
+    fmt.Printf("quote=%+v err=%v took=%dns\n", q, err, time.Since(start) )
   }(time.Now())
   return s.next.GetQuote(ctx, id)
 }
