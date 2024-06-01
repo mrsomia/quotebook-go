@@ -10,7 +10,9 @@ func run() {
 	svc = NewLoggingService(svc)
 
 	apiServer := NewApiServer(svc)
-	apiServer.Start(":8080")
+	if err := apiServer.Start(":8080"); err != nil {
+		fmt.Println(err)
+	}
 
 }
 
