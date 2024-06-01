@@ -18,6 +18,9 @@ bin/*
 go.work
 go.work.sum
 
+# air
+tmp
+
 # env file
 .env
 
