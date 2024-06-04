@@ -7,6 +7,7 @@ package dbqueries
 
 import (
 	"context"
+	"time"
 )
 
 const createAuthor = `-- name: CreateAuthor :one
@@ -96,19 +97,33 @@ func (q *Queries) GetAuthor(ctx context.Context, id int64) (Author, error) {
 	return i, err
 }
 
-const getQuote = `-- name: GetQuote :one
-SELECT id, content, author_id, date_added FROM quotes
-WHERE id = ? LIMIT 1
+const getQuoteAndAuthor = `-- name: GetQuoteAndAuthor :one
+SELECT quotes.id, content, author_id, date_added, authors.id, name FROM quotes
+INNER JOIN authors
+  ON quotes.author_id = authors.id
+WHERE quotes.id = ?
+LIMIT 1
 `
 
-func (q *Queries) GetQuote(ctx context.Context, id int64) (Quote, error) {
-	row := q.db.QueryRowContext(ctx, getQuote, id)
-	var i Quote
+type GetQuoteAndAuthorRow struct {
+	ID        int64
+	Content   string
+	AuthorID  int64
+	DateAdded time.Time
+	ID_2      int64
+	Name      string
+}
+
+func (q *Queries) GetQuoteAndAuthor(ctx context.Context, id int64) (GetQuoteAndAuthorRow, error) {
+	row := q.db.QueryRowContext(ctx, getQuoteAndAuthor, id)
+	var i GetQuoteAndAuthorRow
 	err := row.Scan(
 		&i.ID,
 		&i.Content,
 		&i.AuthorID,
 		&i.DateAdded,
+		&i.ID_2,
+		&i.Name,
 	)
 	return i, err
 }

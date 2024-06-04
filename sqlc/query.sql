@@ -40,9 +40,13 @@ INSERT into quotes (
 )
 RETURNING *;
 
--- name: GetQuote :one
+-- name: GetQuoteAndAuthor :one
 SELECT * FROM quotes
-WHERE id = ? LIMIT 1;
+INNER JOIN authors
+  ON quotes.author_id = authors.id
+WHERE quotes.id = ?
+LIMIT 1;
+
 
 -- name: CreateQuoteAuthor :one
 -- BEGIN TRANSACTION
