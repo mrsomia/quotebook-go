@@ -1,0 +1,25 @@
+CREATE TABLE IF NOT EXISTS authors (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS quotes (
+  id INTEGER PRIMARY KEY,
+  content TEXT NOT NULL,
+  author_id INTEGER NOT NULL,
+  date_added DATE NOT NULL DEFAULT CURRENT_DATE,
+  FOREIGN KEY (author_id) REFERENCES authors (id)
+);
+
+CREATE TABLE IF NOT EXISTS tags (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS quote_tags (
+  quote_id INTEGER NOT NULL,
+  tag_id INTEGER NOT NULL,
+  PRIMARY KEY (quote_id, tag_id),
+  FOREIGN KEY (quote_id) REFERENCES quotes (id),
+  FOREIGN KEY (tag_id) REFERENCES tags (id)
+);
