@@ -36,7 +36,13 @@ func (s *ApiServer) handleGetQuote(w http.ResponseWriter, r *http.Request) {
 	idToValidate := r.PathValue("id")
 	id, err := strconv.Atoi(idToValidate)
 	if err != nil {
-		writeJSON(w, http.StatusUnprocessableEntity, map[string]string{"error": fmt.Sprintf("unable to process request to /quote/%v", idToValidate)})
+		writeJSON(
+			w,
+			http.StatusUnprocessableEntity,
+			map[string]string{
+				"error": fmt.Sprintf("unable to process request to /quote/%v", idToValidate),
+			},
+		)
 	}
 
 	// d := json.NewDecoder(r.Body)
