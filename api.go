@@ -13,7 +13,7 @@ type ApiServer struct {
 	mux *http.ServeMux
 }
 
-func NewApiServer(svc Service) *ApiServer {
+func NewApiServer(svc Service, addr string) *http.Server {
 	s := http.NewServeMux()
 	apiServer := &ApiServer{
 		svc: svc,
@@ -21,15 +21,11 @@ func NewApiServer(svc Service) *ApiServer {
 	}
 	// INFO: move this router config to an add routes function
 	apiServer.mux.HandleFunc("GET /quote/{id}", apiServer.handleGetQuote)
-	return apiServer
-}
-
-func (s *ApiServer) Start(addr string) error {
 	server := &http.Server{
 		Addr:    addr,
-		Handler: s.mux,
+		Handler: s,
 	}
-	return server.ListenAndServe()
+	return server
 }
 
 func (s *ApiServer) handleGetQuote(w http.ResponseWriter, r *http.Request) {
