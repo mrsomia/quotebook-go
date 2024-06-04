@@ -1,12 +1,18 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"log"
 )
 
 func run() {
 	fmt.Println("Running")
-	svc := NewQuoteService(nil)
+	db, err := NewQuotePersistor(context.TODO())
+	if err != nil {
+		log.Fatalln(err)
+	}
+	svc := NewQuoteService(db)
 	svc = NewLoggingService(svc)
 
 	apiServer := NewApiServer(svc)
