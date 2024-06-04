@@ -12,6 +12,7 @@ import (
 
 type Persistor interface {
 	CreateQuote(context.Context, *Quote) error
+	GetQuoteByID(context.Context, int) (dbqueries.GetQuoteAndAuthorRow, error)
 }
 
 type QuotePersistor struct {
@@ -41,6 +42,7 @@ func (p *QuotePersistor) CreateQuote(ctx context.Context, quote *Quote) error {
 	return nil
 }
 
-func (p *QuotePersistor) GetQuoteByID(ctx context.Context, id int) (*Quote, error) {
-	return nil, nil
+func (p *QuotePersistor) GetQuoteByID(ctx context.Context, id int) (dbqueries.GetQuoteAndAuthorRow, error) {
+	id64 := int64(id)
+	return p.db.GetQuoteAndAuthor(ctx, id64)
 }

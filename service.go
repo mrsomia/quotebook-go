@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 )
 
 type Service interface {
@@ -21,9 +20,11 @@ func NewQuoteService(db Persistor) Service {
 }
 
 func (s *QuoteService) GetQuote(ctx context.Context, id int) (*Quote, error) {
-	// TODO: add db intergiration
-	fmt.Printf("id pass to get quote: %v\n", id)
-	return &Quote{Quote: "Progress over Pride", Author: "Lebron James"}, nil
+	q, err := s.db.GetQuoteByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	return &Quote{Quote: q.Content, Author: q.Name, DateAdded: q.DateAdded}, nil
 }
 
 func (s *QuoteService) CreateQuote(ctx context.Context, quote *Quote) error {
