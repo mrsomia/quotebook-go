@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 )
 
 type ApiServer struct {
@@ -19,7 +20,7 @@ func NewApiServer(svc Service) *ApiServer {
 		mux: s,
 	}
 	// INFO: move this router config to an add routes function
-	apiServer.mux.HandleFunc("POST /quote", apiServer.handleGetQuote)
+	apiServer.mux.HandleFunc("GET /quote/{id}", apiServer.handleGetQuote)
 	return apiServer
 }
 
@@ -32,18 +33,24 @@ func (s *ApiServer) Start(addr string) error {
 }
 
 func (s *ApiServer) handleGetQuote(w http.ResponseWriter, r *http.Request) {
-	d := json.NewDecoder(r.Body)
-	b := struct {
-		ID int `json:"id"`
-	}{}
-
-	if err := d.Decode(&b); err != nil {
-		s := fmt.Sprintf("Unable to read JSON\nerror: %v", err.Error())
-		writeJSON(w, http.StatusUnprocessableEntity, map[string]string{"error": s})
-		return
+	idToValidate := r.PathValue("id")
+	id, err := strconv.Atoi(idToValidate)
+	if err != nil {
+		writeJSON(w, http.StatusUnprocessableEntity, map[string]string{"error": fmt.Sprintf("unable to process request to /quote/%v", idToValidate)})
 	}
 
-	quote, err := s.svc.GetQuote(context.Background(), b.ID)
+	// d := json.NewDecoder(r.Body)
+	// b := struct {
+	// 	ID int `json:"id"`
+	// }{}
+
+	// if err := d.Decode(&b); err != nil {
+	// 	s := fmt.Sprintf("Unable to read JSON\nerror: %v", err.Error())
+	// 	writeJSON(w, http.StatusUnprocessableEntity, map[string]string{"error": s})
+	// 	return
+	// }
+
+	quote, err := s.svc.GetQuote(context.Background(), id)
 	if err != nil {
 		writeJSON(w, http.StatusUnprocessableEntity, map[string]string{"error": err.Error()})
 		return
