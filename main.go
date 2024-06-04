@@ -10,11 +10,16 @@ import (
 	"os/signal"
 	"sync"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
-func run(ctx context.Context, w io.Writer) error {
+func run(ctx context.Context, w io.Writer, getEnv func(string) string) error {
 	fmt.Println("Running")
-	port := ":8080"
+	port := getEnv("PORT")
+	if port == "" {
+		port = ":8080"
+	}
 
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
 	defer cancel()
@@ -22,6 +27,7 @@ func run(ctx context.Context, w io.Writer) error {
 	if err != nil {
 		log.Fatalln(err)
 	}
+
 	svc := NewQuoteService(db)
 	svc = NewLoggingService(svc)
 
@@ -55,8 +61,13 @@ func run(ctx context.Context, w io.Writer) error {
 }
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	ctx := context.Background()
-	if err := run(ctx, os.Stdout); err != nil {
+	if err := run(ctx, os.Stdout, os.Getenv); err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 	}
 }
